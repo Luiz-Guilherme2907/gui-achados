@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+  /* ==================================================================
+     COLE AQUI O LINK DA SUA PLANILHA
+     no google sheets: arquivo > compartilhar > publicar na web
+     escolhe a aba dos achados e o formato "valores separados por vírgula (.csv)"
+     clica em publicar, copia o link e cola entre as aspas abaixo.
+     enquanto estiver "modelo-planilha.csv", a página mostra os exemplos.
+     ================================================================== */
+  const PLANILHA = "modelo-planilha.csv";
+
+  document.documentElement.classList.add("js");
+  // já começa a baixar a planilha enquanto o resto da página carrega
+  window.pedidoPlanilha = fetch(PLANILHA, window.AbortSignal && AbortSignal.timeout ? { signal: AbortSignal.timeout(8000) } : {});
+  pedidoPlanilha.catch(() => {});
+</script>
+<title>gui achados: os achados que eu testei e aprovo</title>
+<meta name="description" content="os achados que o gui testou e aprova, com link direto pro mercado livre, shopee, amazon e tiktok shop.">
+<meta name="theme-color" content="#FF5B1F">
+<meta name="color-scheme" content="only light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="gui achados">
+<meta property="og:description" content="os achados que eu testei e aprovo, com link direto pra loja.">
+<meta property="og:image" content="img/og.jpg">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="img/icone-180.png">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Permanent+Marker&family=Poppins:wght@500;700;800&display=swap">
+<style>
+:root {
+  --laranja: #FF5B1F;
+  --preto: #141210;
+  --creme: #FFF4E4;
+  --amarelo: #FFD23F;
+  --tinta-suave: #6B5D52;
+
+  --fundo: var(--creme);
+  --texto: var(--preto);
+  --texto-2: var(--tinta-suave);
+
+  --f-logo: "Archivo Black", "Arial Black", sans-serif;
+  --f-marcador: "Permanent Marker", "Comic Sans MS", cursive;
+  --f-etiqueta: "Anton", Impact, "Arial Narrow", sans-serif;
+  --f-texto: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --caixa-texto: 10px;
+  --raio: 16px;
+  --borda: 2px solid var(--preto);
+  --sombra: 4px 4px 0 var(--preto);
+  --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right));
+
+  --mola: cubic-bezier(.34, 1.56, .64, 1);
+  --mola-leve: cubic-bezier(.22, 1.22, .36, 1);
+  --suave: cubic-bezier(.2, .8, .2, 1);
+  --sai: cubic-bezier(.5, 0, .9, .4);
+
+  --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+@media (min-width: 768px) { :root { --gutter: max(28px, env(safe-area-inset-left), env(safe-area-inset-right)); } }
+
+/* base */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { color-scheme: only light; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: clip; scrollbar-gutter: stable; }
+html:has(.folha[open]) { overflow: hidden; }
+body { margin: 0; min-height: 100dvh; background: var(--fundo); color: var(--texto); font: 500 16px/1.55 var(--f-texto); -webkit-tap-highlight-color: transparent; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+h1, h2, h3, p { margin: 0; }
+:focus-visible { outline: 3px solid var(--preto); outline-offset: 3px; }
+.wrap { width: min(100% - 2 * var(--gutter), 1120px); margin-inline: auto; }
+.ic { width: 1.2em; height: 1.2em; flex: none; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.topo, .vitrine, .como, .redes, .rodape { overflow-x: clip; }
+
+.pular { position: absolute; z-index: 50; left: 12px; top: 12px; padding: 10px 16px; border-radius: 10px; background: var(--preto); color: var(--creme); font-weight: 700; text-decoration: none; transform: translateY(-200%); transition: transform .2s var(--suave); }
+.pular:focus { transform: none; }
+.faixa { padding: calc(8px + env(safe-area-inset-top)) var(--gutter) 8px; background: var(--preto); color: var(--creme); font: 600 13px/1.4 var(--f-texto); }
+
+.progresso { position: fixed; z-index: 40; top: env(safe-area-inset-top); left: 0; right: 0; height: 4px; background: var(--laranja); transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; }
+@supports (animation-timeline: scroll()) {
+  .progresso { animation: encher linear both; animation-timeline: scroll(root); }
+}
+@keyframes encher { to { transform: scaleX(1); } }
+
+/* grão por cima dos blocos laranja, igual ao do logo */
+.grao { position: relative; isolation: isolate; }
+.grao::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--grao); opacity: .32; mix-blend-mode: overlay; pointer-events: none; }
+
+/* rabiscos de caneta: o traço se desenha com pathLength=1 */
+.rabisco { position: absolute; overflow: visible; pointer-events: none; max-width: none; }
+.rabisco path { fill: none; stroke: currentColor; stroke-width: var(--traco, 5); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
+.js .rabisco path { stroke-dashoffset: 1.02; }
+.js .desenha path { animation: traco var(--dur, .8s) var(--suave) var(--d, .2s) forwards; }
+.js .visivel .rabisco path { animation: traco var(--dur, .8s) var(--suave) calc(var(--atraso, 0ms) + var(--d, .35s)) forwards; }
+@keyframes traco { to { stroke-dashoffset: 0; } }
+
+/* caixa de texto estilo tiktok: cada linha ganha a sua caixa */
+.caixa { display: inline; padding: .16em .5em .2em; border-radius: var(--caixa-texto); font: 700 clamp(18px, 5.4vw, 24px)/1.62 var(--f-texto); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.caixa--creme { background: var(--creme); color: var(--preto); }
+.caixa--laranja { background: var(--laranja); color: var(--preto); }
+.caixa--preta { background: var(--preto); color: var(--creme); }
+.caixa--contorno { background: var(--creme); color: var(--preto); box-shadow: inset 0 0 0 2px var(--preto); }
+
+/* sticker de papel recortado */
+.sticker { display: block; padding: .5em .72em .44em; background: var(--amarelo); color: var(--preto); font: 400 clamp(19px, 5.2vw, 24px)/1 var(--f-etiqueta); letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; clip-path: polygon(0 9%, 7% 0, 15% 7%, 24% 1%, 33% 6%, 42% 0, 51% 6%, 60% 1%, 69% 7%, 78% 0, 87% 6%, 94% 0, 100% 8%, 98% 30%, 100% 52%, 97% 74%, 100% 94%, 92% 100%, 83% 94%, 74% 100%, 65% 95%, 56% 100%, 47% 94%, 38% 100%, 29% 95%, 20% 100%, 11% 94%, 3% 100%, 0 90%, 2% 68%, 0 47%, 3% 25%); }
+
+/* botões: borda preta + sombra dura; no toque a sombra some e o botão afunda */
+.btn { --fundo-btn: var(--laranja); --texto-btn: var(--preto); display: inline-flex; align-items: center; justify-content: center; gap: .45em; min-height: 48px; padding: .7em 1.25em; border: var(--borda); border-radius: 14px; background: var(--fundo-btn); color: var(--texto-btn); font: 800 17px/1.15 var(--f-texto); text-align: center; text-decoration: none; box-shadow: var(--sombra); cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; transition: transform .16s var(--suave), box-shadow .16s var(--suave); }
+.btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--preto); transition-duration: .06s; }
+@media (hover: hover) {
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--preto); }
+  .btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--preto); }
+}
+.btn--preto { --fundo-btn: var(--preto); --texto-btn: var(--creme); }
+.btn--creme { --fundo-btn: var(--creme); }
+.btn--grande { width: 100%; min-height: 58px; font-size: 19px; }
+.btn--pequeno { min-height: 44px; padding: .5em .9em; font-size: 14px; box-shadow: 3px 3px 0 var(--preto); }
+.btn--pequeno:active { transform: translate(3px, 3px); }
+
+.etiqueta { display: inline-block; padding: 5px 10px; border-radius: 999px; background: var(--preto); color: var(--creme); font: 700 12px/1.1 var(--f-texto); letter-spacing: .02em; white-space: nowrap; }
+.preco { display: inline-block; padding: 5px 8px 4px; border: var(--borda); border-radius: 6px; background: var(--amarelo); color: var(--preto); font: 400 18px/1 var(--f-etiqueta); letter-spacing: .02em; white-space: nowrap; transform: rotate(-2deg); }
+.era { color: var(--texto-2); font-size: 13px; font-weight: 600; }
+.sem-preco { color: var(--texto-2); font-size: 13px; font-weight: 700; }
+
+/* ---------- topo ---------- */
+.topo { padding: calc(36px + env(safe-area-inset-top)) 0 56px; background: var(--laranja); color: var(--preto); }
+.topo__grade { display: grid; gap: 44px; grid-template-areas: "texto" "destaque" "acoes"; }
+.topo__texto { grid-area: texto; position: relative; }
+.topo__destaque { grid-area: destaque; position: relative; width: 100%; max-width: 480px; }
+.topo__acoes { grid-area: acoes; display: grid; gap: 14px; justify-items: stretch; }
+.topo__redes { display: flex; flex-wrap: wrap; gap: 10px; }
+.topo__redes .btn { flex: 1 1 auto; }
+
+.logo { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; }
+.logo__gui { display: block; font: 400 clamp(118px, 36vw, 200px)/.82 var(--f-logo); color: var(--creme); letter-spacing: -.035em; transform: rotate(-3deg); transform-origin: 20% 80%; animation: cai .75s var(--mola) .05s backwards; }
+.logo__achados { position: relative; display: block; margin: .02em 0 0 .55em; font: 400 clamp(46px, 14vw, 78px)/1 var(--f-marcador); color: var(--preto); text-transform: uppercase; letter-spacing: .01em; transform: rotate(-2deg); animation: estampa .5s var(--mola) .38s backwards; }
+.logo__circulo { left: -.42em; top: -.36em; width: 5.4em; height: 1.85em; --traco: 7; --d: .62s; --dur: .9s; }
+
+.falas { margin-top: 34px; display: grid; justify-items: start; gap: 8px; }
+.fala { display: block; animation: pop .42s var(--mola) var(--d, 0s) backwards; }
+.fala:nth-child(1) { --d: .95s; transform: rotate(-1.5deg); }
+.fala:nth-child(2) { --d: 1.05s; transform: rotate(.8deg); margin-left: 12px; }
+.fala--contagem { margin-left: 4px; transform: rotate(-1deg); animation: none; }
+.fala--contagem:not(.pronto) { visibility: hidden; }
+.fala--contagem.pronto { animation: pop .42s var(--mola) var(--d, 0s) backwards; }
+
+.seta { z-index: 2; right: 4%; bottom: -66px; width: 84px; height: 104px; color: var(--creme); --traco: 5; --d: 1.35s; --dur: .6s; }
+.topo:has(#destaque[hidden]) .seta { display: none; }
+
+@keyframes cai { from { opacity: 0; transform: translateY(-50px) rotate(-14deg) scale(1.08); } }
+@keyframes estampa { from { opacity: 0; transform: scale(.55) rotate(8deg); } }
+@keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.85); } }
+
+@media (min-width: 900px) {
+  .topo { padding: calc(72px + env(safe-area-inset-top)) 0 88px; }
+  .topo__grade { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); grid-template-areas: "texto destaque" "acoes destaque"; align-items: start; column-gap: 64px; row-gap: 36px; }
+  .topo__destaque { justify-self: end; margin-top: 16px; }
+  .topo__acoes { justify-items: start; }
+  .seta { right: 2%; bottom: -24px; transform: rotate(-58deg); }
+}
+
+/* ---------- cards ---------- */
+.card { position: relative; display: flex; flex-direction: column; min-width: 0; background: var(--creme); border: var(--borda); border-radius: var(--raio); box-shadow: var(--sombra); transition: transform .2s var(--suave), box-shadow .2s var(--suave); }
+.card:active { transform: scale(.98); box-shadow: 2px 2px 0 var(--preto); transition-duration: .08s; }
+@media (hover: hover) {
+  .card:hover { transform: translateY(-4px) rotate(-.5deg); box-shadow: 7px 7px 0 var(--preto); }
+  .card:active { transform: scale(.98); box-shadow: 2px 2px 0 var(--preto); }
+}
+.card:has(.card__abrir:focus-visible) { outline: 3px solid var(--preto); outline-offset: 4px; }
+
+.card__foto { position: relative; aspect-ratio: 1; overflow: hidden; border-bottom: var(--borda); border-radius: calc(var(--raio) - 2px) calc(var(--raio) - 2px) 0 0; background: var(--laranja); }
+.card__foto img { width: 100%; height: 100%; object-fit: cover; }
+.card__capa { display: none; position: absolute; inset: 0; padding: 44px 14px 16px; align-content: center; font: 400 clamp(17px, 4.8vw, 26px)/1.08 var(--f-marcador); text-transform: uppercase; color: var(--preto); overflow-wrap: anywhere; transform: rotate(-4deg); }
+.sem-foto img { display: none; }
+.sem-foto .card__capa { display: grid; }
+.sem-foto .card__fala { display: none; }
+.card:nth-child(even) .sem-foto, .card--destaque .sem-foto { background: var(--preto); }
+.card:nth-child(even) .sem-foto .card__capa, .card--destaque .sem-foto .card__capa { color: var(--creme); }
+.card:nth-child(even) .sem-foto .card__loja, .card--destaque .sem-foto .card__loja { background: var(--creme); color: var(--preto); }
+.card__selos { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+.card--destaque .card__selos { justify-content: flex-end; top: 10px; right: 10px; }
+.card--destaque .card__loja { padding: 5px 10px; font-size: 13px; }
+.card--destaque .card__num { padding: 4px 7px 3px; font-size: 16px; }
+.card__loja { min-width: 0; padding: 4px 7px; font-size: 11px; letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; }
+.card__num { flex: none; padding: 3px 5px 2px; border: var(--borda); border-radius: 7px; background: var(--creme); font: 400 13px/1 var(--f-etiqueta); letter-spacing: .03em; }
+.card__fala { position: absolute; left: 8px; right: 10px; bottom: 10px; transform: rotate(-2deg); transform-origin: left bottom; }
+.card__fala .caixa { font-size: 13px; line-height: 1.8; padding: .22em .55em; }
+
+.card__corpo { display: flex; flex-direction: column; gap: 10px; flex: 1; padding: 12px 12px 14px; }
+.card__nome { font: 700 15px/1.3 var(--f-texto); }
+.card__abrir { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; padding: 0; border: 0; background: none; font: inherit; text-align: left; }
+.card__abrir::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.card__abrir:focus-visible { outline: none; }
+.card__preco { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-height: 30px; }
+.card__cta { position: relative; z-index: 2; margin-top: auto; width: 100%; min-height: 44px; gap: .35em; padding: 10px 8px; font-size: 15px; white-space: nowrap; }
+.card__cta .ic { width: 1em; height: 1em; }
+
+.card__selo, .card__momento { display: none; }
+.card--destaque { transform: rotate(1.2deg); box-shadow: 6px 6px 0 var(--preto); }
+.card--destaque:active { transform: rotate(1.2deg) scale(.985); }
+@media (hover: hover) { .card--destaque:hover { transform: rotate(.4deg) translateY(-4px); box-shadow: 9px 9px 0 var(--preto); } }
+.card--destaque .card__selo { display: block; position: absolute; z-index: 3; top: -20px; left: -12px; transform: rotate(-6deg); filter: drop-shadow(3px 3px 0 var(--preto)); pointer-events: none; }
+.card--destaque .card__momento { display: block; font: inherit; }
+.card--destaque .card__momento .caixa { font-size: 15px; }
+.card--destaque .card__foto { aspect-ratio: 4 / 3; }
+.card--destaque .card__capa { padding: 48px 22px 24px; font-size: clamp(28px, 8vw, 40px); }
+.card--destaque .card__fala .caixa { font-size: 15px; }
+.card--destaque .card__corpo { gap: 12px; padding: 16px 16px 18px; }
+.card--destaque .card__nome { font-size: clamp(19px, 5.4vw, 23px); line-height: 1.2; }
+.card--destaque .card__abrir { -webkit-line-clamp: 3; }
+.card--destaque .preco { font-size: 24px; }
+.card--destaque .card__cta { min-height: 58px; font-size: 19px; box-shadow: 5px 5px 0 var(--preto); }
+
+.card--destaque.pronto { animation: chega .6s var(--mola-leve) var(--d, 0s) backwards; }
+.card--destaque.pronto .card__selo { animation: carimbo .5s var(--mola) calc(var(--d, 0s) + .45s) backwards; }
+.card--destaque.pronto .card__cta { animation: balanca .9s ease-in-out calc(var(--d, 0s) + 1.3s); }
+@keyframes chega { from { opacity: 0; transform: translateY(40px) rotate(5deg); } }
+@keyframes carimbo { 0% { opacity: 0; transform: scale(1.9) rotate(14deg); } 55% { opacity: 1; } }
+@keyframes balanca { 15% { transform: rotate(-3deg) scale(1.04); } 30% { transform: rotate(3deg) scale(1.04); } 45% { transform: rotate(-2deg) scale(1.02); } 60% { transform: rotate(1deg); } 75% { transform: none; } }
+
+/* esqueleto enquanto a planilha carrega */
+.esq { pointer-events: none; box-shadow: none; animation: pulsa 1.3s ease-in-out infinite; }
+.esq .card__foto { background: rgb(20 18 16 / .08); border-bottom-color: rgb(20 18 16 / .15); }
+.esq__linha { display: block; width: 90%; height: 14px; border-radius: 7px; background: rgb(20 18 16 / .1); }
+.esq__linha + .esq__linha { width: 55%; }
+.esq__botao { display: block; height: 44px; margin-top: auto; border-radius: 14px; background: rgb(20 18 16 / .1); }
+@keyframes pulsa { 50% { opacity: .55; } }
+
+/* ---------- vitrine ---------- */
+.vitrine { padding: 64px 0 72px; }
+.vitrine:focus { outline: none; }
+.titulo { font: 800 clamp(30px, 8.6vw, 48px)/1.06 var(--f-texto); letter-spacing: -.025em; }
+.marcador { position: relative; display: inline-block; font: 400 1.04em/1 var(--f-marcador); letter-spacing: 0; white-space: nowrap; }
+.sublinha { left: -3%; bottom: -.34em; width: 106%; height: .46em; color: var(--laranja); --traco: 7; }
+.aviso-curto { margin-top: 18px; max-width: 46ch; color: var(--texto-2); font-size: 14px; font-weight: 600; }
+
+.busca { margin-top: 28px; }
+.busca__label { display: block; margin-bottom: 8px; font: 800 17px/1.3 var(--f-texto); }
+.busca__campo { position: relative; }
+.busca__campo .ic { position: absolute; left: 15px; top: 50%; width: 22px; height: 22px; transform: translateY(-50%); pointer-events: none; }
+.busca input { width: 100%; min-height: 54px; padding: 0 16px 0 48px; border: var(--borda); border-radius: 14px; background: var(--creme); box-shadow: var(--sombra); font: 600 17px/1 var(--f-texto); -webkit-appearance: none; appearance: none; transition: box-shadow .2s var(--suave), transform .2s var(--suave); }
+.busca input::placeholder { color: var(--texto-2); opacity: 1; }
+.busca input:focus { box-shadow: 6px 6px 0 var(--laranja); transform: translate(-2px, -2px); }
+.busca input:focus-visible { outline: 3px solid var(--preto); outline-offset: 2px; }
+
+.chips { display: flex; gap: 8px; margin: 18px calc(-1 * var(--gutter)) 0; padding: 4px var(--gutter) 10px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 44px; padding: 0 18px; border: var(--borda); border-radius: 999px; background: var(--creme); font: 700 15px/1 var(--f-texto); scroll-snap-align: start; transition: background-color .2s, color .2s, transform .3s var(--mola); }
+.chip[aria-pressed="true"] { background: var(--preto); color: var(--creme); transform: rotate(-2deg); }
+.chip:active { transform: scale(.92); }
+
+.contador { min-height: 1.5em; margin: 6px 0 14px; color: var(--texto-2); font-size: 14px; font-weight: 700; }
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.vazio, .erro { display: grid; justify-items: start; gap: 14px; padding: 24px 0 8px; }
+.vazio .caixa, .erro .caixa { font-size: 18px; }
+.dica { max-width: 40ch; color: var(--texto-2); font-weight: 600; }
+
+@media (max-width: 339px) { .grade { grid-template-columns: 1fr; } }
+@media (min-width: 640px) { .grade { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
+@media (min-width: 768px) { .vitrine { padding: 88px 0 96px; } .busca { max-width: 560px; } }
+@media (min-width: 1024px) { .grade { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; } }
+
+/* ---------- como funciona ---------- */
+.como { padding: 64px 0; background: var(--laranja); }
+.como .sublinha { color: var(--preto); }
+.passos { display: grid; gap: 14px; margin: 30px 0 0; padding: 0; list-style: none; }
+.passo { display: flex; align-items: center; gap: 12px; }
+.passo:nth-child(2) { margin-left: 14px; }
+.passo:nth-child(3) { margin-left: 4px; }
+.passo__num { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--preto); color: var(--creme); font: 400 22px/1 var(--f-etiqueta); transform: rotate(-6deg); }
+.aviso-afiliado { max-width: 52ch; margin-top: 30px; font-size: 15px; font-weight: 600; }
+@media (min-width: 900px) { .passos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; } .passo { margin-left: 0 !important; } }
+
+/* ---------- redes ---------- */
+.redes { padding: 72px 0 80px; background: var(--preto); color: var(--creme); }
+.redes .sublinha { color: var(--laranja); }
+.perfis { display: grid; gap: 24px; margin-top: 34px; }
+.perfil { display: flex; flex-direction: column; gap: 16px; padding: 20px; border: var(--borda); border-radius: 20px; color: var(--preto); transform: rotate(var(--giro)); }
+.perfil--tiktok { --giro: -1.2deg; background: var(--creme); box-shadow: 6px 6px 0 var(--laranja); }
+.perfil--insta { --giro: 1.2deg; background: var(--laranja); box-shadow: 6px 6px 0 var(--creme); }
+.perfil__topo { display: flex; align-items: center; gap: 14px; }
+.avatar { flex: none; width: 64px; height: 64px; border: var(--borda); border-radius: 50%; }
+.perfil__rede { display: flex; align-items: center; gap: 6px; font: 800 14px/1 var(--f-texto); }
+.perfil__arroba { margin-top: 6px; font: 400 clamp(19px, 5.6vw, 26px)/1.1 var(--f-logo); overflow-wrap: anywhere; }
+.perfil__texto { font: 700 18px/1.4 var(--f-texto); }
+@media (min-width: 720px) { .perfis { grid-template-columns: 1fr 1fr; gap: 32px; } }
+
+/* ---------- rodapé ---------- */
+.rodape { padding: 48px 0 calc(40px + env(safe-area-inset-bottom)); background: var(--laranja); font-size: 14px; font-weight: 600; }
+.rodape__logo { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
+.rodape__gui { font: 400 52px/1 var(--f-logo); color: var(--creme); transform: rotate(-3deg); }
+.rodape__achados { font: 400 26px/1 var(--f-marcador); text-transform: uppercase; }
+.rodape p + p { margin-top: 10px; }
+.rodape a { font-weight: 800; }
+
+/* ---------- barra fixa de redes ---------- */
+.barra { position: fixed; z-index: 30; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: min(100% - 20px, 420px); padding: 8px; border: var(--borda); border-radius: 20px; background: var(--creme); box-shadow: var(--sombra); transform: translate(-50%, calc(100% + 40px)); transition: transform .25s var(--sai); }
+.barra.mostrar { transform: translate(-50%, 0); transition: transform .55s var(--mola-leve); }
+.barra .btn { min-height: 48px; padding: 8px 10px; font-size: 16px; box-shadow: 3px 3px 0 var(--preto); }
+.barra .btn:active { transform: translate(3px, 3px); }
+@media (min-width: 1024px) {
+  .barra { left: auto; right: 24px; width: 340px; transform: translateY(calc(100% + 40px)); }
+  .barra.mostrar { transform: none; }
+}
+
+/* ---------- modal do produto ---------- */
+.folha { position: fixed; inset: 0; width: 100%; max-width: 100%; height: fit-content; max-height: 100%; margin: auto 0 0; padding: 0; border: 0; background: transparent; color: var(--texto); overflow: visible; }
+.folha::backdrop { background: rgb(20 18 16 / .6); }
+.folha__caixa { position: relative; display: flex; flex-direction: column; max-height: 92dvh; border: var(--borda); border-bottom: 0; border-radius: 24px 24px 0 0; background: var(--creme); }
+/* extensão pra a mola não mostrar buraco embaixo da folha */
+.folha__caixa::after { content: ""; position: absolute; top: calc(100% - 1px); left: -2px; right: -2px; height: 80px; border-inline: var(--borda); background: var(--creme); }
+.folha__topo { position: relative; flex: none; display: flex; align-items: center; justify-content: center; min-height: 52px; cursor: grab; touch-action: none; }
+.folha__puxador { width: 48px; height: 6px; border-radius: 3px; background: var(--preto); opacity: .35; }
+.folha__fechar { position: absolute; top: 6px; right: 10px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: var(--borda); border-radius: 50%; background: var(--creme); transition: transform .2s var(--mola); }
+.folha__fechar:active { transform: scale(.88) rotate(-90deg); }
+.folha__rola { flex: 1 1 auto; min-height: 0; padding: 0 16px 18px; overflow-y: auto; overscroll-behavior: contain; }
+.folha__foto { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border: var(--borda); border-radius: 16px; background: var(--laranja); }
+.folha__foto img { width: 100%; height: 100%; object-fit: cover; }
+.folha__foto .card__capa { padding: 24px; font-size: clamp(28px, 8vw, 42px); }
+.folha__info { display: grid; justify-items: start; gap: 12px; padding-top: 18px; }
+.folha__meta { display: flex; align-items: center; gap: 10px; }
+.folha__num { font: 400 17px/1 var(--f-etiqueta); letter-spacing: .03em; }
+.folha__nome { font: 800 clamp(22px, 6.4vw, 30px)/1.14 var(--f-texto); letter-spacing: -.02em; }
+.folha__frase .caixa { font-size: 17px; }
+.folha__sub { margin-top: 6px; font: 400 21px/1 var(--f-marcador); }
+.folha__porque { display: grid; justify-items: start; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.folha__porque li { display: block; }
+.folha__porque .caixa { font-size: 16px; }
+.folha__preco { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 4px; }
+.folha__preco .preco { font-size: 26px; }
+.folha__acoes { flex: none; display: grid; gap: 12px; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); border-top: var(--borda); background: var(--creme); }
+.folha__secundarias { display: flex; flex-wrap: wrap; gap: 10px; }
+.folha__secundarias .btn { flex: 1 1 auto; }
+
+.folha[open] .folha__caixa { animation: sobe .48s var(--mola-leve) backwards; }
+.folha[open]::backdrop { animation: aparece .3s ease-out backwards; }
+.folha.saindo .folha__caixa { animation: desce .24s var(--sai) forwards; }
+.folha.saindo::backdrop { animation: some .24s ease-in forwards; }
+.folha[open] .anima { animation: sobe-item .5s var(--mola-leve) calc(.1s + var(--i, 0) * 55ms) backwards; }
+@keyframes sobe { from { transform: translateY(100%); } }
+@keyframes desce { to { transform: translateY(105%); } }
+@keyframes cresce { from { opacity: 0; transform: scale(.55) rotate(-3deg); } }
+@keyframes encolhe { to { opacity: 0; transform: scale(.9) rotate(1deg); } }
+@keyframes aparece { from { opacity: 0; } }
+@keyframes some { to { opacity: 0; } }
+@keyframes sobe-item { from { opacity: 0; transform: translateY(18px); } }
+
+@media (min-width: 768px) {
+  .folha { width: min(100% - 48px, 880px); margin: auto; }
+  .folha__caixa { max-height: min(90dvh, 680px); border-bottom: var(--borda); border-radius: 24px; box-shadow: 8px 8px 0 var(--preto); }
+  .folha__caixa::after, .folha__puxador { display: none; }
+  .folha__topo { position: absolute; z-index: 3; top: 14px; right: 14px; min-height: 0; cursor: auto; touch-action: auto; }
+  .folha__fechar { position: static; }
+  .folha__rola { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; padding: 28px 28px 20px; }
+  .folha__foto { align-self: start; aspect-ratio: 1; }
+  .folha__info { padding: 0 44px 0 0; }
+  .folha__acoes { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 16px 28px 22px; }
+  .folha[open] .folha__caixa { animation-name: cresce; }
+  .folha.saindo .folha__caixa { animation-name: encolhe; }
+}
+
+.aviso { position: fixed; z-index: 5; top: calc(16px + env(safe-area-inset-top)); left: 50%; padding: 12px 18px; border-radius: 999px; background: var(--preto); color: var(--creme); font: 700 15px/1 var(--f-texto); opacity: 0; transform: translate(-50%, -20px); transition: transform .3s var(--mola), opacity .2s; pointer-events: none; }
+.aviso.mostrar { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- entrada ao rolar ---------- */
+.js .revelar:not(.visivel) { opacity: 0; }
+.js .revelar.visivel { animation: revela .65s var(--mola-leve) var(--atraso, 0ms) backwards; }
+.js .perfil--tiktok.visivel { animation-name: de-esquerda; }
+.js .perfil--insta.visivel { animation-name: de-direita; }
+.card:nth-child(odd) { --giro-in: -2.5deg; }
+.card:nth-child(even) { --giro-in: 2deg; }
+@keyframes revela { from { opacity: 0; transform: translateY(30px) rotate(var(--giro-in, -2deg)); } }
+@keyframes de-esquerda { from { opacity: 0; transform: translateX(-70px) rotate(-8deg); } }
+@keyframes de-direita { from { opacity: 0; transform: translateX(70px) rotate(8deg); } }
+
+/* a vitrine se reorganiza animada quando filtra */
+::view-transition-group(*) { animation-duration: .35s; animation-timing-function: var(--suave); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<a class="pular" href="#achados">pular pros achados</a>
+<p class="faixa" id="exemplo" hidden>mostrando exemplos. cola o link da sua planilha no começo do index.html</p>
+<div class="progresso" aria-hidden="true"></div>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <filter id="aspero" x="-10%" y="-100%" width="120%" height="300%"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="4"/></filter>
+  <symbol id="i-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/></g><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-baixo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m-6-6 6 6 6-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.2v13.6a.8.8 0 0 0 1.2.7l10.6-6.8a.8.8 0 0 0 0-1.4L9.2 4.5A.8.8 0 0 0 8 5.2z"/></symbol>
+  <symbol id="i-compartilhar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M12 15V3m-5 5 5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+  <symbol id="i-busca" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.6-4.6"/></g></symbol>
+</svg>
+
+<header class="topo grao" id="topo">
+  <div class="wrap topo__grade">
+    <div class="topo__texto">
+      <h1 class="logo">
+        <span class="logo__gui">gui</span>
+        <span class="logo__achados">achados<svg class="rabisco desenha logo__circulo" viewBox="0 0 520 190" aria-hidden="true"><path pathLength="1" filter="url(#aspero)" d="M360 14C250 2 90 10 34 52C-8 82 16 150 150 170C280 186 470 172 506 118C530 80 488 30 380 16C320 10 260 14 210 22"/></svg></span>
+      </h1>
+      <p class="falas">
+        <span class="fala"><span class="caixa caixa--creme">achei, testei e aprovei</span></span>
+        <span class="fala"><span class="caixa caixa--creme">deixei o link de tudo aqui</span></span>
+        <span class="fala fala--contagem" id="contagem"><span class="caixa caixa--preta">achados no ar</span></span>
+      </p>
+      <svg class="rabisco desenha seta" viewBox="0 0 92 112" aria-hidden="true"><path pathLength="1" filter="url(#aspero)" d="M12 8C50 2 84 28 78 62C74 82 66 94 54 106"/><path pathLength="1" style="--d:1.9s;--dur:.25s" d="M70 102L54 106L58 90"/></svg>
+    </div>
+
+    <div class="topo__destaque" id="destaque">
+      <div class="card card--destaque esq" aria-hidden="true">
+        <div class="card__foto"></div>
+        <div class="card__corpo"><span class="esq__linha"></span><span class="esq__linha"></span><span class="esq__botao"></span></div>
+      </div>
+    </div>
+
+    <div class="topo__acoes">
+      <a class="btn btn--creme" href="#achados">ver todos os achados <svg class="ic" aria-hidden="true"><use href="#i-baixo"/></svg></a>
+      <div class="topo__redes">
+        <a class="btn btn--preto btn--pequeno" href="https://www.tiktok.com/@achados_gui" target="_blank" rel="noopener" aria-label="seguir no tiktok"><svg class="ic" aria-hidden="true"><use href="#i-tiktok"/></svg> tiktok</a>
+        <a class="btn btn--preto btn--pequeno" href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener" aria-label="seguir no instagram"><svg class="ic" aria-hidden="true"><use href="#i-insta"/></svg> instagram</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="vitrine" id="achados" aria-labelledby="achados-titulo" tabindex="-1">
+    <div class="wrap">
+      <h2 class="titulo revelar" id="achados-titulo">todos os <span class="marcador">achados<svg class="rabisco sublinha" viewBox="0 0 200 24" aria-hidden="true"><path pathLength="1" filter="url(#aspero)" d="M4 15C46 6 118 20 196 7"/></svg></span></h2>
+      <p class="aviso-curto">links de afiliado: eu ganho uma comissão e você paga o mesmo preço.</p>
+
+      <form class="busca" id="form-busca" role="search">
+        <label class="busca__label" for="busca">viu no vídeo? procura aqui</label>
+        <div class="busca__campo">
+          <svg class="ic" aria-hidden="true"><use href="#i-busca"/></svg>
+          <input id="busca" type="search" placeholder="nome ou número, tipo 12" autocomplete="off" enterkeyhint="search" spellcheck="false">
+        </div>
+      </form>
+
+      <div class="chips" id="chips" role="group" aria-label="filtrar por categoria"></div>
+      <p class="contador" id="contador" aria-live="polite"></p>
+
+      <div class="grade" id="grade" aria-busy="true">
+        <div class="card esq" aria-hidden="true"><div class="card__foto"></div><div class="card__corpo"><span class="esq__linha"></span><span class="esq__linha"></span><span class="esq__botao"></span></div></div>
+        <div class="card esq" aria-hidden="true"><div class="card__foto"></div><div class="card__corpo"><span class="esq__linha"></span><span class="esq__linha"></span><span class="esq__botao"></span></div></div>
+        <div class="card esq" aria-hidden="true"><div class="card__foto"></div><div class="card__corpo"><span class="esq__linha"></span><span class="esq__linha"></span><span class="esq__botao"></span></div></div>
+        <div class="card esq" aria-hidden="true"><div class="card__foto"></div><div class="card__corpo"><span class="esq__linha"></span><span class="esq__linha"></span><span class="esq__botao"></span></div></div>
+      </div>
+
+      <div class="vazio" id="vazio" hidden>
+        <p><span class="caixa caixa--preta">não achei nada com isso</span></p>
+        <p class="dica">tenta outro nome ou o número que eu falei no vídeo.</p>
+        <button class="btn btn--laranja" type="button" id="limpar">limpar busca</button>
+      </div>
+      <div class="erro" id="erro" role="alert" hidden>
+        <p><span class="caixa caixa--preta">não consegui carregar os achados agora</span></p>
+        <p class="dica" id="erro-dica"></p>
+        <button class="btn btn--laranja" type="button" id="tentar">tentar de novo</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="como grao" aria-labelledby="como-titulo">
+    <div class="wrap">
+      <h2 class="titulo revelar" id="como-titulo">como <span class="marcador">funciona<svg class="rabisco sublinha" viewBox="0 0 200 24" aria-hidden="true"><path pathLength="1" filter="url(#aspero)" d="M4 15C46 6 118 20 196 7"/></svg></span></h2>
+      <ol class="passos">
+        <li class="passo revelar"><span class="passo__num" aria-hidden="true">1</span><span class="caixa caixa--creme">eu compro e uso</span></li>
+        <li class="passo revelar"><span class="passo__num" aria-hidden="true">2</span><span class="caixa caixa--creme">mostro funcionando no vídeo</span></li>
+        <li class="passo revelar"><span class="passo__num" aria-hidden="true">3</span><span class="caixa caixa--creme">deixo o link aqui pra você</span></li>
+      </ol>
+      <p class="aviso-afiliado revelar">os links daqui são de afiliado. se você comprar por eles, eu ganho uma comissão e você paga o mesmo preço. é isso que me ajuda a continuar testando coisa nova.</p>
+    </div>
+  </section>
+
+  <section class="redes" id="redes" aria-labelledby="redes-titulo">
+    <div class="wrap">
+      <h2 class="titulo revelar" id="redes-titulo">me segue pra ver os próximos <span class="marcador">achados<svg class="rabisco sublinha" viewBox="0 0 200 24" aria-hidden="true"><path pathLength="1" filter="url(#aspero)" d="M4 15C46 6 118 20 196 7"/></svg></span></h2>
+      <div class="perfis">
+        <article class="perfil perfil--tiktok revelar" aria-labelledby="perfil-tiktok">
+          <div class="perfil__topo">
+            <img class="avatar" src="img/logo-256.webp" alt="" width="64" height="64" loading="lazy" decoding="async">
+            <div>
+              <p class="perfil__rede"><svg class="ic" aria-hidden="true"><use href="#i-tiktok"/></svg> tiktok</p>
+              <h3 class="perfil__arroba" id="perfil-tiktok">@achados_gui</h3>
+            </div>
+          </div>
+          <p class="perfil__texto">lá eu mostro tudo funcionando</p>
+          <a class="btn btn--preto btn--grande" href="https://www.tiktok.com/@achados_gui" target="_blank" rel="noopener">seguir no tiktok <svg class="ic" aria-hidden="true"><use href="#i-seta"/></svg></a>
+        </article>
+        <article class="perfil perfil--insta revelar" aria-labelledby="perfil-insta">
+          <div class="perfil__topo">
+            <img class="avatar" src="img/logo-256.webp" alt="" width="64" height="64" loading="lazy" decoding="async">
+            <div>
+              <p class="perfil__rede"><svg class="ic" aria-hidden="true"><use href="#i-insta"/></svg> instagram</p>
+              <h3 class="perfil__arroba" id="perfil-insta">@promocoes_gui</h3>
+            </div>
+          </div>
+          <p class="perfil__texto">as promoções que eu acho vão pros stories</p>
+          <a class="btn btn--preto btn--grande" href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener">seguir no insta <svg class="ic" aria-hidden="true"><use href="#i-seta"/></svg></a>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape grao" id="rodape">
+  <div class="wrap">
+    <p class="rodape__logo"><span class="rodape__gui">gui</span><span class="rodape__achados">achados</span></p>
+    <p>preço e estoque mudam rápido. confere o valor final na loja antes de comprar.</p>
+    <p>© <span id="ano">2026</span> gui achados · <a href="https://www.tiktok.com/@achados_gui" target="_blank" rel="noopener">tiktok</a> · <a href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener">instagram</a></p>
+  </div>
+</footer>
+
+<nav class="barra" id="barra" aria-label="redes do gui">
+  <a class="btn btn--preto" href="https://www.tiktok.com/@achados_gui" target="_blank" rel="noopener" aria-label="seguir no tiktok"><svg class="ic" aria-hidden="true"><use href="#i-tiktok"/></svg> tiktok</a>
+  <a class="btn btn--laranja" href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener" aria-label="seguir no instagram"><svg class="ic" aria-hidden="true"><use href="#i-insta"/></svg> instagram</a>
+</nav>
+
+<dialog class="folha" id="folha" aria-labelledby="folha-nome">
+  <div class="folha__caixa">
+    <div class="folha__topo">
+      <span class="folha__puxador" aria-hidden="true"></span>
+      <button class="folha__fechar" type="button" aria-label="fechar"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="folha__rola">
+      <div class="folha__foto anima" style="--i:0"><img alt="" decoding="async"><span class="card__capa" aria-hidden="true"></span></div>
+      <div class="folha__info">
+        <p class="folha__meta anima" style="--i:1"><span class="etiqueta folha__loja"></span><span class="folha__num"></span></p>
+        <h2 class="folha__nome anima" id="folha-nome" style="--i:2"></h2>
+        <p class="folha__frase anima" style="--i:3"><span class="caixa caixa--laranja"></span></p>
+        <h3 class="folha__sub anima" style="--i:4">por que eu aprovei</h3>
+        <ul class="folha__porque"></ul>
+        <p class="folha__preco anima" style="--i:8"></p>
+      </div>
+    </div>
+    <div class="folha__acoes">
+      <a class="btn btn--laranja btn--grande folha__cta" target="_blank" rel="sponsored noopener"><span>ver na loja</span> <svg class="ic" aria-hidden="true"><use href="#i-seta"/></svg></a>
+      <div class="folha__secundarias">
+        <a class="btn btn--creme btn--pequeno folha__video" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg> ver o vídeo</a>
+        <button class="btn btn--creme btn--pequeno folha__compartilhar" type="button"><svg class="ic" aria-hidden="true"><use href="#i-compartilhar"/></svg> mandar pra alguém</button>
+      </div>
+    </div>
+  </div>
+  <p class="aviso" id="aviso" role="status" aria-live="polite"></p>
+</dialog>
+
+<template id="tpl-card">
+  <article class="card">
+    <span class="card__selo" aria-hidden="true"><span class="sticker">achado do gui</span></span>
+    <div class="card__foto">
+      <img alt="" loading="lazy" decoding="async" width="600" height="600">
+      <span class="card__capa" aria-hidden="true"></span>
+      <span class="card__selos"><span class="etiqueta card__loja"></span><span class="card__num"></span></span>
+      <span class="card__fala"><span class="caixa caixa--creme"></span></span>
+    </div>
+    <div class="card__corpo">
+      <h2 class="card__momento"><span class="caixa caixa--laranja">o achado do momento</span></h2>
+      <h3 class="card__nome"><button class="card__abrir" type="button"></button></h3>
+      <p class="card__preco"></p>
+      <a class="btn btn--laranja card__cta" target="_blank" rel="sponsored noopener">quero esse <svg class="ic" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+  </article>
+</template>
+
+<noscript><p class="faixa">liga o javascript pra ver os achados.</p></noscript>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const reduz = matchMedia("(prefers-reduced-motion: reduce)");
+  const largo = matchMedia("(min-width: 768px)");
+
+  const LOJAS = {
+    mercadolivre: ["mercado livre", "no"],
+    shopee: ["shopee", "na"],
+    amazon: ["amazon", "na"],
+    tiktokshop: ["tiktok shop", "no"],
+    magalu: ["magalu", "na"],
+    aliexpress: ["aliexpress", "no"],
+  };
+  const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+  const semAcento = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  const sim = v => /^(sim|s|x|true|verdadeiro|1)$/i.test(String(v ?? "").trim());
+  const link = (u, local) => (/^https?:\/\//i.test(u) || (local && /^img\//.test(u)) ? u : "");
+  // ponytail: lh3.googleusercontent.com/d/ID é atalho não oficial pra foto do drive; se parar, usa o link direto da imagem
+  const drive = u => u.replace(/^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]+).*$/, "https://lh3.googleusercontent.com/d/$1");
+  const depois = ms => Math.max(0, ms - performance.now()) + "ms";
+  const tempo = () => (window.AbortSignal && AbortSignal.timeout ? { signal: AbortSignal.timeout(8000) } : {});
+
+  // csv do google: aspas, vírgula e quebra de linha dentro do campo
+  function lerCSV(txt) {
+    const linhas = [];
+    let linha = [], campo = "", aspas = false;
+    for (let i = 0; i < txt.length; i++) {
+      const c = txt[i];
+      if (aspas) {
+        if (c !== '"') campo += c;
+        else if (txt[i + 1] === '"') { campo += '"'; i++; }
+        else aspas = false;
+      } else if (c === '"') aspas = true;
+      else if (c === ",") { linha.push(campo); campo = ""; }
+      else if (c === "\n") { linha.push(campo); linhas.push(linha); linha = []; campo = ""; }
+      else if (c !== "\r") campo += c;
+    }
+    if (campo || linha.length) { linha.push(campo); linhas.push(linha); }
+    return linhas;
+  }
+
+  // planilha em português: "R$ 1.299,90" vira 1299.9 e "29.90" continua 29.9
+  function numeroBR(s) {
+    let t = String(s ?? "").replace(/[^\d,.]/g, "");
+    if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+    else if (!/\.\d{1,2}$/.test(t)) t = t.replace(/\./g, "");
+    const n = parseFloat(t);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function paraAchados(linhas) {
+    const [cabecalho = [], ...resto] = linhas;
+    const chaves = cabecalho.map(c => semAcento(c).replace(/[^a-z]/g, ""));
+    const vistos = new Set();
+    return resto
+      .map((linha, i) => {
+        const campos = Object.fromEntries(chaves.map((k, j) => [k, (linha[j] ?? "").trim()]));
+        const v = k => campos[k] ?? "";
+        const [loja, prep] = LOJAS[semAcento(v("loja")).replace(/\s/g, "")] ?? [v("loja").toLowerCase() || "loja", "na"];
+        const a = {
+          numero: parseInt(v("numero"), 10),
+          nome: v("nome"),
+          link: link(v("link")),
+          loja,
+          cta: `ver ${prep} ${loja}`,
+          categoria: v("categoria").toLowerCase(),
+          preco: numeroBR(v("preco")),
+          precoAntigo: numeroBR(v("precoantigo")),
+          foto: link(drive(v("foto")), true),
+          frase: v("frase"),
+          porque: v("porque").split(";").map(s => s.trim()).filter(Boolean),
+          video: link(v("video")),
+          destaque: sim(v("destaque")),
+        };
+        if (!a.nome || !a.link || !(a.numero >= 0)) {
+          if (linha.some(x => x.trim())) console.warn(`linha ${i + 2} da planilha ficou de fora: precisa de numero, nome e link (começando com https://)`);
+          return null;
+        }
+        a.busca = semAcento([a.nome, a.categoria, a.loja, a.frase].join(" "));
+        return a;
+      })
+      .filter(Boolean)
+      .sort((x, y) => y.numero - x.numero)
+      .filter(a => {
+        if (!vistos.has(a.numero)) { vistos.add(a.numero); return true; }
+        console.warn(`achado #${a.numero} repetido na planilha: ficou só o primeiro`);
+        return false;
+      });
+  }
+
+  // termo já vem sem acento. número busca exato ("12" ou "#12")
+  function combina(a, termo, cat) {
+    if (cat !== "tudo" && a.categoria !== cat) return false;
+    const n = termo.match(/^#?(\d+)$/);
+    return n ? a.numero === +n[1] : a.busca.includes(termo);
+  }
+
+  if (/[?&]teste\b/.test(location.search)) {
+    const falhas = [];
+    const confere = (ok, nome) => ok || falhas.push(nome);
+    const t = lerCSV('a,b\r\n"1,5","diz ""oi""\nok"\n');
+    confere(t.length === 2 && t[1][0] === "1,5" && t[1][1] === 'diz "oi"\nok', "lerCSV");
+    confere(numeroBR("R$ 1.299,90") === 1299.9 && numeroBR("29,9") === 29.9 && numeroBR("29.90") === 29.9 && numeroBR("1.299") === 1299 && numeroBR("") === null, "numeroBR");
+    const x = paraAchados([["Número", "Nome", "Link", "Loja", "Preço antigo"], ["7", "Pão de queijo", "https://x.com", "Mercado Livre", "10,5"], ["", "sem número", "https://y.com", ""], ["8", "link ruim", "javascript:alert(1)", ""]]);
+    confere(x.length === 1 && x[0].cta === "ver no mercado livre" && x[0].precoAntigo === 10.5, "paraAchados");
+    confere(combina(x[0], "pao", "tudo") && combina(x[0], "#7", "tudo") && !combina(x[0], "70", "tudo") && !combina(x[0], "pao", "casa"), "busca");
+    console.log(falhas.length ? "testes falharam: " + falhas.join(", ") : "testes ok");
+  }
+
+  const grade = $("#grade"), chips = $("#chips"), contador = $("#contador"), vazio = $("#vazio"), erro = $("#erro");
+  const slotDestaque = $("#destaque"), contagem = $("#contagem"), busca = $("#busca"), tpl = $("#tpl-card");
+  const esqueletoGrade = grade.innerHTML, esqueletoDestaque = slotDestaque.innerHTML;
+  const estado = { termo: "", cat: "tudo" };
+  let achados = [], porNumero = new Map();
+
+  $("#exemplo").hidden = PLANILHA !== "modelo-planilha.csv";
+  $("#ano").textContent = new Date().getFullYear();
+
+  // entrada ao rolar: quem entra junto na tela aparece em cascata
+  const olho = "IntersectionObserver" in window && new IntersectionObserver(entradas => {
+    entradas.filter(e => e.isIntersecting).forEach((e, k) => {
+      e.target.style.setProperty("--atraso", k * 60 + "ms");
+      e.target.classList.add("visivel");
+      olho.unobserve(e.target);
+    });
+  }, { rootMargin: "0px 0px -6% 0px" });
+  const revelar = el => (olho ? olho.observe(el) : el.classList.add("visivel"));
+  $$(".revelar").forEach(revelar);
+
+  function novo(tag, classe, texto) {
+    return Object.assign(document.createElement(tag), { className: classe, textContent: texto });
+  }
+
+  // sem foto, a capa mostra a frase rabiscada (ou o nome)
+  function colocarFoto(moldura, a, alt, capa) {
+    const img = $("img", moldura);
+    $(".card__capa", moldura).textContent = capa;
+    moldura.classList.toggle("sem-foto", !a.foto);
+    if (!a.foto) return img.removeAttribute("src");
+    img.onerror = () => moldura.classList.add("sem-foto");
+    img.alt = alt;
+    img.src = a.foto;
+  }
+
+  function colocarPreco(p, a) {
+    if (a.preco == null) return p.replaceChildren(novo("span", "sem-preco", "ver preço " + a.cta.replace(/^ver /, "")));
+    p.replaceChildren(novo("span", "preco", brl.format(a.preco)));
+    if (a.precoAntigo > a.preco) p.append(novo("s", "era", "era " + brl.format(a.precoAntigo)));
+  }
+
+  function cartao(a, destaque) {
+    const el = tpl.content.firstElementChild.cloneNode(true);
+    el.dataset.numero = a.numero;
+    if (destaque) el.classList.add("card--destaque");
+    else {
+      el.classList.add("revelar");
+      el.style.viewTransitionName = "achado-" + a.numero;
+    }
+    $(".card__loja", el).textContent = a.loja;
+    $(".card__num", el).textContent = "#" + a.numero;
+    $(".card__abrir", el).textContent = a.nome;
+    const fala = $(".card__fala", el);
+    if (a.frase) $(".caixa", fala).textContent = a.frase;
+    else fala.remove();
+    colocarFoto($(".card__foto", el), a, "", a.frase || a.nome);
+    colocarPreco($(".card__preco", el), a);
+    const cta = $(".card__cta", el);
+    cta.href = a.link;
+    cta.setAttribute("aria-label", `quero esse: ${a.nome}, ${a.cta}`);
+    $(".card__abrir", el).addEventListener("click", () => abrir(a, el));
+    return el;
+  }
+
+  function chip(cat) {
+    const b = novo("button", "chip", cat);
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(cat === estado.cat));
+    b.addEventListener("click", () => { estado.cat = cat; marcarChips(); filtrar(true); });
+    return b;
+  }
+  const marcarChips = () => $$(".chip", chips).forEach(b => b.setAttribute("aria-pressed", String(b.textContent === estado.cat)));
+
+  function aplicarFiltro() {
+    let n = 0;
+    for (const el of grade.children) {
+      const ok = combina(porNumero.get(+el.dataset.numero), estado.termo, estado.cat);
+      el.hidden = !ok;
+      n += ok;
+    }
+    contador.textContent = `${n} ${n === 1 ? "achado" : "achados"}`;
+    vazio.hidden = n > 0;
+  }
+  // com uma transição ainda rodando, filtra direto em vez de empilhar outra
+  let transicao = null;
+  function filtrar(animar) {
+    if (!animar || transicao || !document.startViewTransition || reduz.matches) return aplicarFiltro();
+    transicao = document.startViewTransition(aplicarFiltro);
+    transicao.ready.catch(() => {});
+    transicao.finished.then(() => { transicao = null; }, () => { transicao = null; });
+  }
+
+  function montar() {
+    porNumero = new Map(achados.map(a => [a.numero, a]));
+
+    const d = cartao(achados.find(a => a.destaque) ?? achados[0], true);
+    d.style.setProperty("--d", depois(700));
+    d.classList.add("pronto");
+    slotDestaque.replaceChildren(d);
+
+    $(".caixa", contagem).textContent = `${achados.length} ${achados.length === 1 ? "achado" : "achados"} no ar`;
+    contagem.style.setProperty("--d", depois(1150));
+    contagem.classList.add("pronto");
+
+    const cats = [...new Set(achados.map(a => a.categoria).filter(Boolean))].sort((x, y) => x.localeCompare(y, "pt-BR"));
+    chips.replaceChildren(...["tudo", ...cats].map(chip));
+    chips.hidden = cats.length < 2;
+
+    grade.replaceChildren(...achados.map(a => cartao(a, false)));
+    grade.removeAttribute("aria-busy");
+    $$(".card", grade).forEach(revelar);
+    aplicarFiltro();
+
+    const a = doHash();
+    if (a) abrir(a);
+  }
+
+  function falhou(vazia) {
+    slotDestaque.hidden = true;
+    grade.replaceChildren();
+    grade.removeAttribute("aria-busy");
+    chips.hidden = true;
+    contador.textContent = "";
+    $("#erro-dica").textContent =
+      vazia ? "a planilha tá sem achados. cada linha precisa de numero, nome e link."
+      : location.protocol === "file:" ? "abre a página por um servidor (tipo o live server do vs code) pra ela conseguir ler a planilha."
+      : /docs\.google\.com/.test(PLANILHA) && !/output=csv/.test(PLANILHA) ? "o link da planilha tem que ser o de publicar na web em csv (termina com output=csv)."
+      : "confere a internet e tenta de novo.";
+    erro.hidden = false;
+  }
+
+  async function carregar(pedido) {
+    erro.hidden = true;
+    try {
+      const r = await pedido;
+      if (!r.ok) throw new Error("http " + r.status);
+      achados = paraAchados(lerCSV(await r.text()));
+      if (!achados.length) throw new Error("vazia");
+      montar();
+    } catch (e) {
+      console.error("não deu pra ler a planilha:", e);
+      falhou(e.message === "vazia");
+    }
+  }
+
+  busca.addEventListener("input", () => { estado.termo = semAcento(busca.value); filtrar(false); });
+  $("#form-busca").addEventListener("submit", e => { e.preventDefault(); busca.blur(); });
+  $("#limpar").addEventListener("click", () => {
+    busca.value = estado.termo = "";
+    estado.cat = "tudo";
+    marcarChips();
+    filtrar(true);
+    busca.focus();
+  });
+  $("#tentar").addEventListener("click", () => {
+    slotDestaque.hidden = false;
+    slotDestaque.innerHTML = esqueletoDestaque;
+    grade.innerHTML = esqueletoGrade;
+    grade.setAttribute("aria-busy", "true");
+    carregar(fetch(PLANILHA, tempo()));
+  });
+
+  // ---------- modal ----------
+  const folha = $("#folha"), caixa = $(".folha__caixa", folha), rola = $(".folha__rola", folha), puxador = $(".folha__topo", folha);
+  let atual = null, empurrou = false, cliqueNoFundo = false, tFim;
+
+  function doHash() {
+    const m = location.hash.match(/^#achado-(\d+)$/);
+    return m ? porNumero.get(+m[1]) : null;
+  }
+
+  function abrir(a, origem) {
+    atual = a;
+    $("#folha-nome").textContent = a.nome;
+    $(".folha__loja", folha).textContent = a.loja;
+    $(".folha__num", folha).textContent = "#" + a.numero;
+    colocarFoto($(".folha__foto", folha), a, a.nome, a.nome);
+    const frase = $(".folha__frase", folha);
+    frase.hidden = !a.frase;
+    $(".caixa", frase).textContent = a.frase;
+    $(".folha__sub", folha).hidden = !a.porque.length;
+    $(".folha__porque", folha).replaceChildren(...a.porque.map((t, i) => {
+      const li = novo("li", "anima", "");
+      li.style.setProperty("--i", 5 + i);
+      li.append(novo("span", "caixa caixa--contorno", t));
+      return li;
+    }));
+    colocarPreco($(".folha__preco", folha), a);
+    const cta = $(".folha__cta", folha);
+    cta.href = a.link;
+    $("span", cta).textContent = a.cta;
+    const video = $(".folha__video", folha);
+    video.hidden = !a.video;
+    video.href = a.video || "#";
+
+    clearTimeout(tFim);
+    folha.classList.remove("saindo");
+    caixa.style.transform = caixa.style.transition = caixa.style.transformOrigin = "";
+    if (!folha.open) folha.showModal();
+    rola.scrollTop = 0;
+    if (origem && largo.matches) {
+      // no desktop o card cresce a partir de onde você tocou
+      const r = origem.getBoundingClientRect(), f = folha.getBoundingClientRect();
+      caixa.style.transformOrigin = `${r.left + r.width / 2 - f.left}px ${r.top + r.height / 2 - f.top}px`;
+    }
+    if (origem) {
+      history.pushState(null, "", "#achado-" + a.numero);
+      empurrou = true;
+    }
+  }
+
+  function fechar() {
+    if (!folha.open || folha.classList.contains("saindo")) return;
+    folha.classList.add("saindo");
+    tFim = setTimeout(fim, 500); // garantia se o animationend não vier
+  }
+  function fim() {
+    clearTimeout(tFim);
+    if (folha.classList.contains("saindo")) folha.close();
+  }
+
+  caixa.addEventListener("animationend", e => { if (e.target === caixa && /desce|encolhe/.test(e.animationName)) fim(); });
+  folha.addEventListener("close", () => {
+    folha.classList.remove("saindo");
+    caixa.style.transform = "";
+    if (/^#achado-\d+$/.test(location.hash)) {
+      if (empurrou) history.back();
+      else history.replaceState(null, "", location.pathname + location.search);
+    }
+    empurrou = false;
+  });
+  folha.addEventListener("cancel", e => { e.preventDefault(); fechar(); });
+  folha.addEventListener("pointerdown", e => { cliqueNoFundo = e.target === folha; });
+  folha.addEventListener("click", e => { if (e.target === folha && cliqueNoFundo) fechar(); });
+  $(".folha__fechar", folha).addEventListener("click", fechar);
+  addEventListener("popstate", () => {
+    const a = doHash();
+    if (a) abrir(a);
+    else fechar();
+  });
+
+  // arrastar pra baixo pelo puxador fecha a folha
+  let arraste = null;
+  puxador.addEventListener("pointerdown", e => {
+    if (largo.matches || e.target.closest("button")) return;
+    arraste = { y: e.clientY, t: e.timeStamp, dy: 0 };
+    puxador.setPointerCapture(e.pointerId);
+    caixa.style.transition = "none";
+  });
+  puxador.addEventListener("pointermove", e => {
+    if (!arraste) return;
+    arraste.dy = Math.max(0, e.clientY - arraste.y);
+    caixa.style.transform = `translateY(${arraste.dy}px)`;
+  });
+  function soltar(e) {
+    if (!arraste) return;
+    const { dy, t } = arraste;
+    arraste = null;
+    caixa.style.transition = "";
+    if (dy > 110 || (dy > 30 && dy / (e.timeStamp - t) > 0.5)) return fechar();
+    caixa.style.transition = "transform .3s var(--mola-leve)";
+    caixa.style.transform = "";
+  }
+  puxador.addEventListener("pointerup", soltar);
+  puxador.addEventListener("pointercancel", soltar);
+
+  const aviso = $("#aviso");
+  let tAviso;
+  function avisar(texto) {
+    aviso.textContent = texto;
+    aviso.classList.add("mostrar");
+    clearTimeout(tAviso);
+    tAviso = setTimeout(() => aviso.classList.remove("mostrar"), 2600);
+  }
+
+  // api moderna e, se faltar ou travar (navegador interno de app), o jeito antigo
+  async function copiar(texto) {
+    try {
+      await Promise.race([navigator.clipboard.writeText(texto), new Promise((_, falha) => setTimeout(falha, 1200))]);
+      return true;
+    } catch {
+      const campo = Object.assign(document.createElement("textarea"), { value: texto, readOnly: true });
+      campo.style.cssText = "position:fixed;top:0;opacity:0";
+      folha.append(campo); // dentro do modal, porque o resto da página fica inerte
+      campo.select();
+      const ok = document.execCommand("copy");
+      campo.remove();
+      return ok;
+    }
+  }
+
+  const botaoCompartilhar = $(".folha__compartilhar", folha);
+  botaoCompartilhar.addEventListener("click", async () => {
+    const a = atual;
+    const url = location.href.split("#")[0] + "#achado-" + a.numero;
+    if (navigator.share) {
+      try { return await navigator.share({ title: a.nome, text: `olha esse achado do gui: ${a.nome}`, url }); }
+      catch (e) { if (e.name === "AbortError") return; }
+    }
+    const ok = await copiar(url);
+    botaoCompartilhar.focus();
+    avisar(ok ? "link copiado" : "não consegui copiar o link");
+  });
+
+  // barra de redes: aparece depois do topo e some quando a seção de redes chega
+  const barra = $("#barra"), naTela = new Map();
+  barra.inert = true;
+  if ("IntersectionObserver" in window) {
+    const vigia = new IntersectionObserver(es => {
+      es.forEach(e => naTela.set(e.target.id, e.isIntersecting));
+      const mostrar = !naTela.get("topo") && !naTela.get("redes") && !naTela.get("rodape");
+      barra.classList.toggle("mostrar", mostrar);
+      barra.inert = !mostrar;
+    });
+    ["topo", "redes", "rodape"].forEach(id => vigia.observe($("#" + id)));
+  }
+
+  carregar(window.pedidoPlanilha || fetch(PLANILHA, tempo()));
+})();
+</script>
+</body>
+</html>
