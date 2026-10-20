@@ -1,8 +1,8 @@
 # gui achados
 
-Página "link na bio" com os achados que o Gui testou e aprova: https://luiz-guilherme2907.github.io/gui-achados/
+Página "link na bio" com os achados que o Gui testou e aprova: https://guiachados.vercel.app
 
-É HTML, CSS e JS puro em um arquivo só (`index.html`), sem build e sem dependência além do Google Fonts.
+É HTML, CSS e JS puro em um arquivo só (`index.html`), sem build e sem dependência além do Google Fonts. Fica hospedada na Vercel, que publica sozinha cada push na `main`.
 
 ## Como atualizar os produtos
 
@@ -11,7 +11,7 @@ Os produtos vêm de uma planilha do Google. A página lê o CSV publicado, entã
 1. No Google Sheets: Arquivo > Importar > `modelo-planilha.csv`.
 2. Troque os exemplos pelos seus achados, um produto por linha.
 3. Arquivo > Compartilhar > Publicar na Web > escolha a aba > formato CSV > Publicar. Copie o link.
-4. Cole o link na linha `const PLANILHA = "..."`, no começo do `index.html`, e envie a mudança pro GitHub (commit + push).
+4. Cole o link na linha `const PLANILHA = "..."`, no começo do `index.html`, e envie a mudança pro GitHub (commit + push). Em um minuto a Vercel publica.
 
 Depois de editar a planilha, a página pode levar uns 5 minutos pra mostrar a mudança, que é o tempo que o Google leva pra republicar.
 
