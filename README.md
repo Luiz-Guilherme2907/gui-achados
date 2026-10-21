@@ -32,9 +32,7 @@ Cada produto também tem link próprio: `.../#achado-18` já abre o produto, bom
 
 O link do grupo fica na linha `const GRUPO_WHATSAPP = "..."`, logo abaixo da planilha, no começo do `index.html`. Ele vale pro aviso em formato de notificação, pro botão "grupo" da barra fixa e pro rodapé.
 
-O aviso desce do topo quando a pessoa passa do começo da página, ou depois de 4 segundos. Quem fecha só vê de novo em 3 dias, e quem toca em "entrar no grupo" não vê mais por 60 dias. Se o modal de um produto estiver aberto, o aviso espera ele fechar.
-
-Pra ver o aviso na hora, mesmo depois de já ter fechado, abra o site com `?grupo` no final: `https://guiachados.vercel.app/?grupo`.
+O aviso desce do topo 1,5 segundo depois que a pessoa entra, toda vez que ela entra ou atualiza a página. Também aparece quando ela volta pro site pelo botão voltar, depois de ir na loja. Fechar no X, em "agora não", com Esc ou arrastando pra cima esconde o aviso só naquela visita. Se o modal de um produto estiver aberto, o aviso espera ele fechar.
 
 ## Testar
 

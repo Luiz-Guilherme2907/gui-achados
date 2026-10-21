@@ -1045,28 +1045,24 @@ h1, h2, h3, p { margin: 0; }
       const mostrar = !naTela.get("topo") && !naTela.get("redes") && !naTela.get("rodape");
       barra.classList.toggle("mostrar", mostrar);
       barra.inert = !mostrar;
-      if (!naTela.get("topo")) setTimeout(mostrarNotif, 1200);
     });
     ["topo", "redes", "rodape"].forEach(id => vigia.observe($("#" + id)));
   }
 
   // ---------- aviso do grupo do whatsapp ----------
-  // aparece quando a pessoa passa do topo (ou depois de 4s). fechou: volta em 3 dias. entrou: some por 60.
-  // com ?grupo no link, aparece na hora mesmo pra quem já fechou
-  const notif = $("#notif"), CHAVE = "gui-grupo-ate", forcarGrupo = /[?&]grupo\b/.test(location.search);
-  let silencioAte = 0, notifPedida = false, puxa = null;
-  try { silencioAte = forcarGrupo ? 0 : Number(localStorage.getItem(CHAVE)) || 0; } catch {}
+  // aparece toda vez que alguém entra ou atualiza a página; fechar vale só pra essa visita
+  const notif = $("#notif");
+  let notifPedida = false, puxa = null;
 
   function mostrarNotif() {
-    if (notifPedida || Date.now() < silencioAte) return;
+    if (notifPedida) return;
     notifPedida = true;
     const abre = () => { notif.hidden = false; };
     // com o modal do produto aberto, espera ele fechar
     if (folha.open) folha.addEventListener("close", () => setTimeout(abre, 1500), { once: true });
     else abre();
   }
-  function esconderNotif(dias) {
-    try { localStorage.setItem(CHAVE, String(Date.now() + dias * 864e5)); } catch {}
+  function esconderNotif() {
     if (notif.hidden || notif.classList.contains("saindo")) return;
     notif.classList.add("saindo");
     setTimeout(() => {
@@ -1078,11 +1074,11 @@ h1, h2, h3, p { margin: 0; }
 
   $$("[data-grupo]").forEach(a => {
     a.href = GRUPO_WHATSAPP;
-    a.addEventListener("click", () => esconderNotif(60));
+    a.addEventListener("click", esconderNotif);
   });
-  $(".notif__fechar").addEventListener("click", () => esconderNotif(3));
-  $(".notif__depois").addEventListener("click", () => esconderNotif(3));
-  notif.addEventListener("keydown", e => { if (e.key === "Escape") esconderNotif(3); });
+  $(".notif__fechar").addEventListener("click", esconderNotif);
+  $(".notif__depois").addEventListener("click", esconderNotif);
+  notif.addEventListener("keydown", e => { if (e.key === "Escape") esconderNotif(); });
 
   // arrastar pra cima dispensa, igual notificação de celular
   notif.addEventListener("pointerdown", e => {
@@ -1101,12 +1097,18 @@ h1, h2, h3, p { margin: 0; }
     const { dy } = puxa;
     puxa = null;
     notif.style.transition = "transform .3s var(--mola-leve)";
-    if (dy < -40) return esconderNotif(3);
+    if (dy < -40) return esconderNotif();
     notif.style.transform = "";
   }
   notif.addEventListener("pointerup", soltarNotif);
   notif.addEventListener("pointercancel", soltarNotif);
-  setTimeout(mostrarNotif, forcarGrupo ? 800 : 4000);
+  setTimeout(mostrarNotif, 1500);
+  // voltar pra página pelo botão voltar (ex.: depois de ir na loja) também conta como entrar de novo
+  addEventListener("pageshow", e => {
+    if (!e.persisted) return;
+    notifPedida = false;
+    setTimeout(mostrarNotif, 1500);
+  });
 
   carregar(window.pedidoPlanilha || fetch(PLANILHA, tempo()));
 })();
