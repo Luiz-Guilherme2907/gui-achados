@@ -13,6 +13,9 @@
      ================================================================== */
   const PLANILHA = "modelo-planilha.csv";
 
+  // link do grupo do whatsapp (vale pro aviso, pra barra fixa e pro rodapé)
+  const GRUPO_WHATSAPP = "https://chat.whatsapp.com/F2Xy1YzykV91UEuJ3kXSa0";
+
   document.documentElement.classList.add("js");
   // já começa a baixar a planilha enquanto o resto da página carrega
   window.pedidoPlanilha = fetch(PLANILHA, window.AbortSignal && AbortSignal.timeout ? { signal: AbortSignal.timeout(8000) } : {});
@@ -304,13 +307,35 @@ h1, h2, h3, p { margin: 0; }
 .rodape a { font-weight: 800; }
 
 /* ---------- barra fixa de redes ---------- */
-.barra { position: fixed; z-index: 30; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: min(100% - 20px, 420px); padding: 8px; border: var(--borda); border-radius: 20px; background: var(--creme); box-shadow: var(--sombra); transform: translate(-50%, calc(100% + 40px)); transition: transform .25s var(--sai); }
+.barra { position: fixed; z-index: 30; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: min(100% - 20px, 420px); padding: 8px; border: var(--borda); border-radius: 20px; background: var(--creme); box-shadow: var(--sombra); transform: translate(-50%, calc(100% + 40px)); transition: transform .25s var(--sai); }
 .barra.mostrar { transform: translate(-50%, 0); transition: transform .55s var(--mola-leve); }
-.barra .btn { min-height: 48px; padding: 8px 10px; font-size: 16px; box-shadow: 3px 3px 0 var(--preto); }
+.barra .btn { min-height: 48px; padding: 8px 6px; font-size: 15px; box-shadow: 3px 3px 0 var(--preto); }
 .barra .btn:active { transform: translate(3px, 3px); }
 @media (min-width: 1024px) {
-  .barra { left: auto; right: 24px; width: 340px; transform: translateY(calc(100% + 40px)); }
+  .barra { left: auto; right: 24px; width: 380px; transform: translateY(calc(100% + 40px)); }
   .barra.mostrar { transform: none; }
+}
+
+/* ---------- aviso do grupo, no formato de notificação de celular ---------- */
+.notif { position: fixed; z-index: 45; top: calc(10px + env(safe-area-inset-top)); left: 10px; right: 10px; max-width: 440px; margin-inline: auto; padding: 14px 14px 16px; border: var(--borda); border-radius: 22px; background: var(--creme); box-shadow: var(--sombra); touch-action: none; animation: notif-desce .6s var(--mola-leve) backwards; }
+.notif.saindo { animation: notif-sobe .24s var(--sai) forwards; }
+.notif__app { display: flex; align-items: center; gap: 10px; }
+.notif__avatar { position: relative; flex: none; }
+.notif__avatar img { width: 40px; height: 40px; border: var(--borda); border-radius: 12px; }
+.notif__badge { position: absolute; top: -7px; right: -7px; display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border: 2px solid var(--creme); border-radius: 999px; background: var(--laranja); color: var(--preto); font: 800 11px/1 var(--f-texto); animation: estampa .4s var(--mola) .55s backwards; }
+.notif__de { flex: 1; min-width: 0; font-size: 13px; line-height: 1.3; }
+.notif__nome { font-weight: 800; }
+.notif__hora { color: var(--texto-2); font-weight: 600; }
+.notif__fechar { flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: -8px -6px -8px 0; padding: 0; border: 0; border-radius: 50%; background: none; }
+.notif__titulo { margin-top: 10px; font: 800 18px/1.25 var(--f-texto); letter-spacing: -.01em; }
+.notif__texto { margin-top: 6px; font-size: 15px; font-weight: 600; line-height: 1.45; }
+.notif__acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.notif__cta { flex: 1 1 auto; min-height: 52px; font-size: 17px; animation: balanca .9s ease-in-out 1.4s; }
+.notif__depois { flex: none; min-height: 52px; }
+@keyframes notif-desce { from { transform: translateY(calc(-100% - 40px)) rotate(-2deg); } }
+@keyframes notif-sobe { to { opacity: 0; transform: translateY(calc(-100% - 40px)); } }
+@media (min-width: 768px) {
+  .notif { top: calc(24px + env(safe-area-inset-top)); left: auto; right: 24px; width: 380px; margin: 0; }
 }
 
 /* ---------- modal do produto ---------- */
@@ -406,6 +431,7 @@ h1, h2, h3, p { margin: 0; }
   <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.2v13.6a.8.8 0 0 0 1.2.7l10.6-6.8a.8.8 0 0 0 0-1.4L9.2 4.5A.8.8 0 0 0 8 5.2z"/></symbol>
   <symbol id="i-compartilhar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M12 15V3m-5 5 5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+  <symbol id="i-whats" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol>
   <symbol id="i-busca" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.6-4.6"/></g></symbol>
 </svg>
 
@@ -525,14 +551,29 @@ h1, h2, h3, p { margin: 0; }
   <div class="wrap">
     <p class="rodape__logo"><span class="rodape__gui">gui</span><span class="rodape__achados">achados</span></p>
     <p>preço e estoque mudam rápido. confere o valor final na loja antes de comprar.</p>
-    <p>© <span id="ano">2026</span> gui achados · <a href="https://www.tiktok.com/@achados_gui" target="_blank" rel="noopener">tiktok</a> · <a href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener">instagram</a></p>
+    <p>© <span id="ano">2026</span> gui achados · <a href="https://www.tiktok.com/@achados_gui" target="_blank" rel="noopener">tiktok</a> · <a href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener">instagram</a> · <a data-grupo target="_blank" rel="noopener">grupo do whatsapp</a></p>
   </div>
 </footer>
 
 <nav class="barra" id="barra" aria-label="redes do gui">
   <a class="btn btn--preto" href="https://www.tiktok.com/@achados_gui" target="_blank" rel="noopener" aria-label="seguir no tiktok"><svg class="ic" aria-hidden="true"><use href="#i-tiktok"/></svg> tiktok</a>
-  <a class="btn btn--laranja" href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener" aria-label="seguir no instagram"><svg class="ic" aria-hidden="true"><use href="#i-insta"/></svg> instagram</a>
+  <a class="btn btn--creme" href="https://www.instagram.com/promocoes_gui" target="_blank" rel="noopener" aria-label="seguir no instagram"><svg class="ic" aria-hidden="true"><use href="#i-insta"/></svg> insta</a>
+  <a class="btn btn--laranja" data-grupo target="_blank" rel="noopener" aria-label="entrar no grupo do whatsapp"><svg class="ic" aria-hidden="true"><use href="#i-whats"/></svg> grupo</a>
 </nav>
+
+<aside class="notif" id="notif" role="dialog" aria-modal="false" aria-labelledby="notif-titulo" aria-describedby="notif-texto" hidden>
+  <div class="notif__app">
+    <span class="notif__avatar"><img src="img/logo-256.webp" alt="" width="40" height="40"><span class="notif__badge" aria-hidden="true">1</span></span>
+    <p class="notif__de"><span class="notif__nome">grupo gui achados</span> · <span class="notif__hora">agora</span></p>
+    <button class="notif__fechar" type="button" aria-label="fechar aviso do grupo"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </div>
+  <p class="notif__titulo" id="notif-titulo">quer ficar sabendo dos achados e promoções em primeira mão?!</p>
+  <p class="notif__texto" id="notif-texto">entra no nosso grupo do whatsapp. eu mando tudo lá primeiro.</p>
+  <div class="notif__acoes">
+    <a class="btn btn--laranja notif__cta" data-grupo target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-whats"/></svg> entrar no grupo</a>
+    <button class="btn btn--creme btn--pequeno notif__depois" type="button">agora não</button>
+  </div>
+</aside>
 
 <dialog class="folha" id="folha" aria-labelledby="folha-nome">
   <div class="folha__caixa">
@@ -1007,9 +1048,67 @@ h1, h2, h3, p { margin: 0; }
       const mostrar = !naTela.get("topo") && !naTela.get("redes") && !naTela.get("rodape");
       barra.classList.toggle("mostrar", mostrar);
       barra.inert = !mostrar;
+      if (!naTela.get("topo")) setTimeout(mostrarNotif, 1200);
     });
     ["topo", "redes", "rodape"].forEach(id => vigia.observe($("#" + id)));
   }
+
+  // ---------- aviso do grupo do whatsapp ----------
+  // aparece quando a pessoa passa do topo (ou depois de 9s). fechou: volta em 3 dias. entrou: some por 60.
+  const notif = $("#notif"), CHAVE = "gui-grupo-ate";
+  let silencioAte = 0, notifPedida = false, puxa = null;
+  try { silencioAte = Number(localStorage.getItem(CHAVE)) || 0; } catch {}
+
+  function mostrarNotif() {
+    if (notifPedida || Date.now() < silencioAte) return;
+    notifPedida = true;
+    const abre = () => { notif.hidden = false; };
+    // com o modal do produto aberto, espera ele fechar
+    if (folha.open) folha.addEventListener("close", () => setTimeout(abre, 1500), { once: true });
+    else abre();
+  }
+  function esconderNotif(dias) {
+    try { localStorage.setItem(CHAVE, String(Date.now() + dias * 864e5)); } catch {}
+    if (notif.hidden || notif.classList.contains("saindo")) return;
+    notif.classList.add("saindo");
+    setTimeout(() => {
+      notif.hidden = true;
+      notif.classList.remove("saindo");
+      notif.style.transform = notif.style.transition = "";
+    }, 260);
+  }
+
+  $$("[data-grupo]").forEach(a => {
+    a.href = GRUPO_WHATSAPP;
+    a.addEventListener("click", () => esconderNotif(60));
+  });
+  $(".notif__fechar").addEventListener("click", () => esconderNotif(3));
+  $(".notif__depois").addEventListener("click", () => esconderNotif(3));
+  notif.addEventListener("keydown", e => { if (e.key === "Escape") esconderNotif(3); });
+
+  // arrastar pra cima dispensa, igual notificação de celular
+  notif.addEventListener("pointerdown", e => {
+    if (e.target.closest("a, button")) return;
+    puxa = { y: e.clientY, dy: 0 };
+    notif.setPointerCapture(e.pointerId);
+    notif.style.transition = "none";
+  });
+  notif.addEventListener("pointermove", e => {
+    if (!puxa) return;
+    puxa.dy = Math.min(0, e.clientY - puxa.y);
+    notif.style.transform = `translateY(${puxa.dy}px)`;
+  });
+  function soltarNotif() {
+    if (!puxa) return;
+    const { dy } = puxa;
+    puxa = null;
+    notif.style.transition = "transform .3s var(--mola-leve)";
+    if (dy < -40) return esconderNotif(3);
+    notif.style.transform = "";
+  }
+  notif.addEventListener("pointerup", soltarNotif);
+  notif.addEventListener("pointercancel", soltarNotif);
+  setTimeout(mostrarNotif, 9000);
 
   carregar(window.pedidoPlanilha || fetch(PLANILHA, tempo()));
 })();

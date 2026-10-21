@@ -33,6 +33,12 @@ Depois de editar a planilha, a página pode levar uns 5 minutos pra mostrar a mu
 
 Cada produto também tem link próprio: `.../#achado-18` já abre o produto, bom pra colocar nos stories.
 
+## Grupo do WhatsApp
+
+O link do grupo fica na linha `const GRUPO_WHATSAPP = "..."`, logo abaixo da planilha, no começo do `index.html`. Ele vale pro aviso em formato de notificação, pro botão "grupo" da barra fixa e pro rodapé.
+
+O aviso desce do topo quando a pessoa passa do começo da página, ou depois de 9 segundos. Quem fecha só vê de novo em 3 dias, e quem toca em "entrar no grupo" não vê mais por 60 dias. Se o modal de um produto estiver aberto, o aviso espera ele fechar.
+
 ## Testar
 
 - Abra `index.html?teste` e procure `testes ok` no console do navegador.
