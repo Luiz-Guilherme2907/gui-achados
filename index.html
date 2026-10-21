@@ -5,13 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
   /* ==================================================================
-     COLE AQUI O LINK DA SUA PLANILHA
-     no google sheets: arquivo > compartilhar > publicar na web
-     escolhe a aba dos achados e o formato "valores separados por vírgula (.csv)"
-     clica em publicar, copia o link e cola entre as aspas abaixo.
-     enquanto estiver "modelo-planilha.csv", a página mostra os exemplos.
+     DE ONDE VÊM OS PRODUTOS
+     hoje: o arquivo produtos.csv aqui do lado (uma linha por achado).
+     se um dia quiser usar uma planilha do google: arquivo > compartilhar >
+     publicar na web > formato csv, e cola o link entre as aspas abaixo.
      ================================================================== */
-  const PLANILHA = "modelo-planilha.csv";
+  const PLANILHA = "produtos.csv";
 
   // link do grupo do whatsapp (vale pro aviso, pra barra fixa e pro rodapé)
   const GRUPO_WHATSAPP = "https://chat.whatsapp.com/F2Xy1YzykV91UEuJ3kXSa0";
@@ -419,7 +418,6 @@ h1, h2, h3, p { margin: 0; }
 </head>
 <body>
 <a class="pular" href="#achados">pular pros achados</a>
-<p class="faixa" id="exemplo" hidden>mostrando exemplos. cola o link da sua planilha no começo do index.html</p>
 <div class="progresso" aria-hidden="true"></div>
 
 <svg class="sprite" aria-hidden="true" focusable="false">
@@ -741,7 +739,6 @@ h1, h2, h3, p { margin: 0; }
   const estado = { termo: "", cat: "tudo" };
   let achados = [], porNumero = new Map();
 
-  $("#exemplo").hidden = PLANILHA !== "modelo-planilha.csv";
   $("#ano").textContent = new Date().getFullYear();
 
   // entrada ao rolar: quem entra junto na tela aparece em cascata

@@ -6,16 +6,11 @@ Página "link na bio" com os achados que o Gui testou e aprova: https://guiachad
 
 ## Como atualizar os produtos
 
-Os produtos vêm de uma planilha do Google. A página lê o CSV publicado, então pra adicionar achado não precisa mexer no código.
+Os produtos ficam em `produtos.csv`, uma linha por achado, e as fotos ficam em `img/achado-<numero>.webp`. Pra adicionar um achado, basta acrescentar uma linha (e a foto) e enviar pro GitHub (commit + push). Em um minuto a Vercel publica.
 
-1. No Google Sheets: Arquivo > Importar > `modelo-planilha.csv`.
-2. Troque os exemplos pelos seus achados, um produto por linha.
-3. Arquivo > Compartilhar > Publicar na Web > escolha a aba > formato CSV > Publicar. Copie o link.
-4. Cole o link na linha `const PLANILHA = "..."`, no começo do `index.html`, e envie a mudança pro GitHub (commit + push). Em um minuto a Vercel publica.
+Se um dia preferir editar por uma planilha do Google: importe o `produtos.csv` no Google Sheets, publique a aba em Arquivo > Compartilhar > Publicar na Web > CSV e cole o link na linha `const PLANILHA = "..."`, no começo do `index.html`. Nesse caso a foto tem que ser um link (da loja ou do Google Drive), e as mudanças podem levar uns 5 minutos pra aparecer.
 
-Depois de editar a planilha, a página pode levar uns 5 minutos pra mostrar a mudança, que é o tempo que o Google leva pra republicar.
-
-## Colunas da planilha
+## Colunas
 
 | coluna | exemplo | observação |
 |---|---|---|
