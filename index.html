@@ -1051,10 +1051,11 @@ h1, h2, h3, p { margin: 0; }
   }
 
   // ---------- aviso do grupo do whatsapp ----------
-  // aparece quando a pessoa passa do topo (ou depois de 9s). fechou: volta em 3 dias. entrou: some por 60.
-  const notif = $("#notif"), CHAVE = "gui-grupo-ate";
+  // aparece quando a pessoa passa do topo (ou depois de 4s). fechou: volta em 3 dias. entrou: some por 60.
+  // com ?grupo no link, aparece na hora mesmo pra quem já fechou
+  const notif = $("#notif"), CHAVE = "gui-grupo-ate", forcarGrupo = /[?&]grupo\b/.test(location.search);
   let silencioAte = 0, notifPedida = false, puxa = null;
-  try { silencioAte = Number(localStorage.getItem(CHAVE)) || 0; } catch {}
+  try { silencioAte = forcarGrupo ? 0 : Number(localStorage.getItem(CHAVE)) || 0; } catch {}
 
   function mostrarNotif() {
     if (notifPedida || Date.now() < silencioAte) return;
@@ -1105,7 +1106,7 @@ h1, h2, h3, p { margin: 0; }
   }
   notif.addEventListener("pointerup", soltarNotif);
   notif.addEventListener("pointercancel", soltarNotif);
-  setTimeout(mostrarNotif, 9000);
+  setTimeout(mostrarNotif, forcarGrupo ? 800 : 4000);
 
   carregar(window.pedidoPlanilha || fetch(PLANILHA, tempo()));
 })();
